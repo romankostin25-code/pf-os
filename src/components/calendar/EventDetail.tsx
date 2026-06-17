@@ -1,4 +1,4 @@
-import { CalendarEvent, EpisodeEvent, StageStatus } from '../../lib/types';
+import { CalendarEvent, StageStatus } from '../../lib/types';
 import { useStore } from '../../lib/store';
 
 const STATUS_PILL: Record<StageStatus, string> = {

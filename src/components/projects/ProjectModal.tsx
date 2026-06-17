@@ -34,7 +34,7 @@ export default function ProjectModal({ project, onClose }: Props) {
     setPhases(prev => [...prev, { id: `ph-${Date.now()}-${prev.length}`, name: '', status: 'not_started' }]);
 
   const updatePhase = (idx: number, field: string, val: string) =>
-    setPhases(prev => prev.map((p, i) => i === idx ? { ...p, [field]: val } : p));
+    setPhases(prev => prev.map((p, i) => i === idx ? { ...p, [field]: val } as Omit<ProjectPhase, 'taskIds'> : p));
 
   const removePhase = (idx: number) =>
     setPhases(prev => prev.filter((_, i) => i !== idx));

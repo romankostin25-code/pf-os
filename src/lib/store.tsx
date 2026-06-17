@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { AppStore, CalendarEvent, Task, Project, TaskStatus, TeamMemberRecord, nextStatus } from './types';
 import { sampleEvents, sampleTasks, sampleProjects, sampleTeamMembers } from './sampleData';
 
@@ -41,7 +41,7 @@ function initStorage(): { events: CalendarEvent[]; tasks: Task[]; projects: Proj
 
 const StoreCtx = createContext<AppStore>(null!);
 
-export function StoreProvider({ children }: { children: React.ReactNode }) {
+export function StoreProvider({ children }: { children: ReactNode }) {
   const init = initStorage();
   const [events, setEvents] = useState<CalendarEvent[]>(init.events);
   const [tasks, setTasks] = useState<Task[]>(init.tasks);

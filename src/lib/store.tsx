@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { AppStore, CalendarEvent, Task, Project, TaskStatus, nextStatus } from './types';
 import { sampleEvents, sampleTasks, sampleProjects } from './sampleData';
 

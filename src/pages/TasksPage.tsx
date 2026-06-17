@@ -14,7 +14,6 @@ const MEMBERS: TeamMember[] = ['Roman', 'Albina', 'Victoria', 'Aliya', 'Other'];
 
 export default function TasksPage() {
   const { tasks } = useStore();
-  const [editTask, setEditTask] = useState<Task | null | 'new'>('new' as any);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [filterMember, setFilterMember] = useState<TeamMember | ''>('');

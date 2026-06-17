@@ -86,11 +86,12 @@ function ProjectCard({
 
 export default function ProjectsPage() {
   const { projects, tasks } = useStore();
-  const [modalProject, setModalProject] = useState<Project | null | 'new'>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editProject, setEditProject] = useState<Project | null>(null);
 
-  const openNew = () => setModalProject('new' as any);
-  const openEdit = (p: Project) => setModalProject(p);
-  const closeModal = () => setModalProject(null);
+  const openNew = () => { setEditProject(null); setModalOpen(true); };
+  const openEdit = (p: Project) => { setEditProject(p); setModalOpen(true); };
+  const closeModal = () => setModalOpen(false);
 
   return (
     <div className="p-6">
@@ -120,9 +121,9 @@ export default function ProjectsPage() {
         )}
       </div>
 
-      {modalProject !== null && (
+      {modalOpen && (
         <ProjectModal
-          project={modalProject === ('new' as any) ? null : modalProject}
+          project={editProject}
           onClose={closeModal}
         />
       )}

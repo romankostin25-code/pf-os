@@ -49,11 +49,12 @@ function MemberCard({ member, taskCount, activeCount, onEdit }: {
 
 export default function TeamPage() {
   const { tasks, teamMembers } = useStore();
-  const [modalMember, setModalMember] = useState<TeamMemberRecord | null | 'new'>(null);
+  const [memberModalOpen, setMemberModalOpen] = useState(false);
+  const [editMember, setEditMember] = useState<TeamMemberRecord | null>(null);
 
-  const openNew = () => setModalMember('new' as any);
-  const openEdit = (m: TeamMemberRecord) => setModalMember(m);
-  const closeModal = () => setModalMember(null);
+  const openNew = () => { setEditMember(null); setMemberModalOpen(true); };
+  const openEdit = (m: TeamMemberRecord) => { setEditMember(m); setMemberModalOpen(true); };
+  const closeModal = () => setMemberModalOpen(false);
 
   return (
     <div className="p-6">
@@ -94,9 +95,9 @@ export default function TeamPage() {
         )}
       </div>
 
-      {modalMember !== null && (
+      {memberModalOpen && (
         <MemberModal
-          member={modalMember === ('new' as any) ? null : modalMember}
+          member={editMember}
           onClose={closeModal}
         />
       )}

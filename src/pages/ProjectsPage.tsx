@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useStore } from '../lib/store';
 import { Project, ProjectPhase, PhaseStatus } from '../lib/types';
+import ProjectModal from '../components/projects/ProjectModal';
 
 const STATUS_COLORS: Record<PhaseStatus, string> = {
   not_started: 'bg-gray-200 text-gray-600',
@@ -15,40 +16,53 @@ function phaseProgress(phase: ProjectPhase, tasks: ReturnType<typeof useStore>['
   return { done, total: phaseTasks.length };
 }
 
-function ProjectCard({ project, tasks, onEdit }: { project: Project; tasks: ReturnType<typeof useStore>['tasks']; onEdit: () => void }) {
+function ProjectCard({
+  project,
+  tasks,
+  onEdit,
+}: {
+  project: Project;
+  tasks: ReturnType<typeof useStore>['tasks'];
+  onEdit: () => void;
+}) {
   const [expanded, setExpanded] = useState(true);
-  const totalTasks = project.phases.flatMap(p => p.taskIds).length;
-  const doneTasks = project.phases.flatMap(p => p.taskIds).filter(id => tasks.find(t => t.id === id)?.status === 'done').length;
+  const allTaskIds = project.phases.flatMap(p => p.taskIds);
+  const totalTasks = allTaskIds.length;
+  const doneTasks = allTaskIds.filter(id => tasks.find(t => t.id === id)?.status === 'done').length;
   const pct = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-      <div className="flex items-center gap-3 p-4 cursor-pointer" onClick={() => setExpanded(e => !e)}>
-        <div className="w-3 h-3 rounded-full shrink-0" style={{ background: project.color }} />
-        <div className="flex-1">
-          <h3 className="font-semibold text-gray-900 text-sm">{project.name}</h3>
-          {project.description && <p className="text-xs text-gray-400 mt-0.5">{project.description}</p>}
+      <div className="flex items-center gap-3 p-4 cursor-pointer group" onClick={() => setExpanded(e => !e)}>
+        <div className="w-3 h-3 rounded shrink-0" style={{ background: project.color }} />
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-gray-900 text-sm truncate">{project.name}</h3>
+          {project.description && <p className="text-xs text-gray-400 mt-0.5 truncate">{project.description}</p>}
         </div>
         <div className="text-right shrink-0">
           <p className="text-xs font-semibold text-gray-600">{pct}%</p>
           <p className="text-[10px] text-gray-400">{doneTasks}/{totalTasks} tasks</p>
         </div>
-        <button onClick={e => { e.stopPropagation(); onEdit(); }} className="text-gray-400 hover:text-gray-600 text-xs ml-2">✎</button>
+        <button
+          onClick={e => { e.stopPropagation(); onEdit(); }}
+          className="text-gray-300 hover:text-gray-500 text-sm ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          ✎
+        </button>
         <span className="text-gray-400 text-xs">{expanded ? '▲' : '▼'}</span>
       </div>
 
-      {/* Progress bar */}
       <div className="h-1 bg-gray-100">
         <div className="h-1 transition-all" style={{ width: `${pct}%`, background: project.color }} />
       </div>
 
-      {expanded && (
+      {expanded && project.phases.length > 0 && (
         <div className="px-4 pb-4 pt-3 space-y-2">
           {project.phases.map(phase => {
             const prog = phaseProgress(phase, tasks);
             return (
               <div key={phase.id} className="flex items-center gap-3 py-1.5 border-b border-gray-50 last:border-0">
-                <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded ${STATUS_COLORS[phase.status]}`}>
+                <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded shrink-0 ${STATUS_COLORS[phase.status]}`}>
                   {phase.status.replace('_', ' ')}
                 </span>
                 <span className="text-sm text-gray-800 flex-1">{phase.name}</span>
@@ -61,6 +75,9 @@ function ProjectCard({ project, tasks, onEdit }: { project: Project; tasks: Retu
               </div>
             );
           })}
+          {project.phases.length === 0 && (
+            <p className="text-xs text-gray-400">No phases — click ✎ to add some</p>
+          )}
         </div>
       )}
     </div>
@@ -69,27 +86,46 @@ function ProjectCard({ project, tasks, onEdit }: { project: Project; tasks: Retu
 
 export default function ProjectsPage() {
   const { projects, tasks } = useStore();
+  const [modalProject, setModalProject] = useState<Project | null | 'new'>(null);
+
+  const openNew = () => setModalProject('new' as any);
+  const openEdit = (p: Project) => setModalProject(p);
+  const closeModal = () => setModalProject(null);
 
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{projects.length} active projects</p>
+          <p className="text-sm text-gray-500 mt-0.5">{projects.length} project{projects.length !== 1 ? 's' : ''}</p>
         </div>
+        <button
+          onClick={openNew}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition-colors"
+        >
+          + New Project
+        </button>
       </div>
 
       <div className="space-y-4 max-w-3xl">
         {projects.map(p => (
-          <ProjectCard key={p.id} project={p} tasks={tasks} onEdit={() => {}} />
+          <ProjectCard key={p.id} project={p} tasks={tasks} onEdit={() => openEdit(p)} />
         ))}
         {projects.length === 0 && (
           <div className="text-center py-16 text-gray-400">
             <p className="text-4xl mb-3">◈</p>
             <p>No projects yet</p>
+            <button onClick={openNew} className="mt-3 text-indigo-500 text-sm hover:underline">Create your first project</button>
           </div>
         )}
       </div>
+
+      {modalProject !== null && (
+        <ProjectModal
+          project={modalProject === ('new' as any) ? null : modalProject}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 }

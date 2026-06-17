@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Task, TaskPriority, TaskStatus, TeamMember, RecurringInterval } from '../../lib/types';
 import { useStore } from '../../lib/store';
-
-const MEMBERS: TeamMember[] = ['Roman', 'Albina', 'Victoria', 'Aliya', 'Other'];
 const PRIORITIES: TaskPriority[] = ['low', 'medium', 'high'];
 const STATUSES: TaskStatus[] = ['todo', 'in_progress', 'done'];
 
@@ -12,7 +10,7 @@ interface Props {
 }
 
 export default function TaskModal({ task, onClose }: Props) {
-  const { saveTask, deleteTask } = useStore();
+  const { saveTask, deleteTask, teamMembers } = useStore();
   const [form, setForm] = useState<Omit<Task, 'id' | 'createdAt'>>({
     title: '',
     description: '',
@@ -87,7 +85,7 @@ export default function TaskModal({ task, onClose }: Props) {
             <label className="text-xs text-gray-500 mb-1 block">Assignee</label>
             <select className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm" value={form.assignee ?? ''} onChange={e => set('assignee', (e.target.value || undefined) as TeamMember | undefined)}>
               <option value="">— none —</option>
-              {MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
+              {teamMembers.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
             </select>
           </div>
           <div>

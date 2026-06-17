@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
-import { CalendarEvent, EpisodeEvent, BrandDealEvent, ReminderEvent, ProductionStage, ShowName, DealStage, TeamMember, DEFAULT_STAGES } from '../../lib/types';
+import { CalendarEvent, EpisodeEvent, ProductionStage, ShowName, DealStage, TeamMember, DEFAULT_STAGES } from '../../lib/types';
 import { useStore } from '../../lib/store';
 
 const SHOWS: ShowName[] = ['Privileged Gossip', 'PF Interviews', 'RGM', 'Albina IG/TikTok', 'Other'];
 const DEAL_STAGES: DealStage[] = ['negotiation', 'contract', 'filming', 'edit', 'published', 'paid'];
-const MEMBERS: TeamMember[] = ['Roman', 'Albina', 'Victoria', 'Aliya', 'Other'];
 
 interface Props { event?: CalendarEvent | null; defaultDate?: string; onClose: () => void; }
 
 export default function EventModal({ event, defaultDate, onClose }: Props) {
-  const { saveEvent, deleteEvent } = useStore();
+  const { saveEvent, deleteEvent, teamMembers } = useStore();
   const [type, setType] = useState<CalendarEvent['type']>('reminder');
   const [date, setDate] = useState(defaultDate ?? '');
   const [title, setTitle] = useState('');
@@ -168,7 +167,7 @@ export default function EventModal({ event, defaultDate, onClose }: Props) {
               <label className="text-xs text-gray-500 mb-1 block">Responsible</label>
               <select className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm" value={responsible} onChange={e => setResponsible(e.target.value as TeamMember | '')}>
                 <option value="">—</option>
-                {MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
+                {teamMembers.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
               </select>
             </div>
           </div>
@@ -182,7 +181,7 @@ export default function EventModal({ event, defaultDate, onClose }: Props) {
             </label>
             <select className="border border-gray-200 rounded-lg px-2 py-1.5 text-sm" value={responsible} onChange={e => setResponsible(e.target.value as TeamMember | '')}>
               <option value="">— assign —</option>
-              {MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
+              {teamMembers.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
             </select>
           </div>
         )}

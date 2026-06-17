@@ -1,4 +1,11 @@
-import { CalendarEvent, Task, Project } from './types';
+import { CalendarEvent, Task, Project, TeamMemberRecord } from './types';
+
+export const sampleTeamMembers: TeamMemberRecord[] = [
+  { id: 'tm-roman', name: 'Roman', role: 'Founder & Creative Director', color: '#6366f1' },
+  { id: 'tm-albina', name: 'Albina', role: 'Talent & Brand Partnerships', color: '#ec4899' },
+  { id: 'tm-victoria', name: 'Victoria', role: 'Scriptwriter', color: '#10b981' },
+  { id: 'tm-aliya', name: 'Aliya', role: 'Graphic Designer', color: '#f59e0b' },
+];
 
 export const sampleEvents: CalendarEvent[] = [
   {

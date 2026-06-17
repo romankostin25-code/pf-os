@@ -1,6 +1,13 @@
 // ── Shared ────────────────────────────────────────────────────────────────────
 
-export type TeamMember = 'Roman' | 'Albina' | 'Victoria' | 'Aliya' | 'Other';
+export type TeamMember = string;
+
+export interface TeamMemberRecord {
+  id: string;
+  name: string;
+  role: string;
+  color: string; // hex colour for avatar
+}
 
 // ── Calendar / Episodes ───────────────────────────────────────────────────────
 
@@ -136,6 +143,7 @@ export interface AppStore {
   events: CalendarEvent[];
   tasks: Task[];
   projects: Project[];
+  teamMembers: TeamMemberRecord[];
 
   // events
   saveEvent: (e: CalendarEvent) => void;
@@ -150,4 +158,8 @@ export interface AppStore {
   // projects
   saveProject: (p: Project) => void;
   deleteProject: (id: string) => void;
+
+  // team
+  saveMember: (m: TeamMemberRecord) => void;
+  deleteMember: (id: string) => void;
 }
